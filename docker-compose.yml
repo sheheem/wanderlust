@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  database:
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=wanderlust
+    
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://database:27017/wanderlust
+    depends_on:
+      - database
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "7500:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+
+
+
