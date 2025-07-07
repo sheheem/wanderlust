@@ -16,6 +16,44 @@ At its core, this project embodies two important aims:
 
 _I'd love for you to make the most of this project - it's all about learning, helping, and growing in the open-source world._
 
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Docker (v20.10+)
+- Docker Compose (v2.0+)
+- Git
+
+## 🚀 Quick Start (Using Docker)
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/wanderlust.git
+   cd wanderlust
+   ```
+
+2. **Start the Application**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the Application**
+   - Frontend: http://localhost:7500
+   - Backend API: http://localhost:5000
+   - MongoDB: mongodb://localhost:27017
+
+4. **Import Sample Data** (Optional)
+   ```bash
+   # Copy sample data to MongoDB container
+   docker cp ./backend/data/sample_posts.json $(docker-compose ps -q database):/sample_posts.json
+   ```
+
+# Import the data
+docker-compose exec database mongoimport --db wanderlust --collection posts --file /sample_posts.json --jsonArray
+
+
+That's it! 🎉 Your Wanderlust application is now running.
+
 ## Setting up the project locally
 
 ### Setting up the Backend
@@ -92,15 +130,101 @@ _I'd love for you to make the most of this project - it's all about learning, he
 4. **Launch the Development Server**
 
    ```bash
+   ```bash
    npm run dev
    ```
 
-## 🌟 Ready to Contribute?
+   ## 📁 Project Structure
+   ```
+   wanderlust/
+   ├── 📁 backend/              # Node.js API server
+   │   ├── 🐳 Dockerfile        # Backend container config
+   │   ├── 📄 package.json      # Dependencies
+   │   ├── 🚀 server.js         # Entry point
+   │   └── 📁 data/
+   │       └── 📄 sample_posts.json
+   ├── 📁 frontend/             # React application  
+   │   ├── 🐳 Dockerfile        # Frontend container config
+   │   ├── ⚙️ nginx.conf        # Nginx configuration
+   │   ├── 📄 package.json      # Dependencies
+   │   └── 📁 src/
+   ├── 🐳 docker-compose.yml    # Multi-container setup
+   ├── 📄 .env                  # Environment variables
+   └── 📖 README.md            # This file
+   ```
+   ```
 
-Kindly go through [CONTRIBUTING.md](https://github.com/krishnaacharyaa/wanderlust/blob/main/.github/CONTRIBUTING.md) to understand everything from setup to contributing guidelines.
+   ## 🏗️ Project Architecture
 
-## 💖 Show Your Support
+   ### Docker Components Overview
+   - **Frontend Container**: React application served via Nginx on port 7500
+   - **Backend Container**: Node.js API service running on port 5000
+   - **Database Container**: MongoDB instance on default port 27017
 
-If you find this project interesting and inspiring, please consider showing your support by starring it on GitHub! Your star goes a long way in helping me reach more developers and encourages me to keep enhancing the project.
+   ### Network Communication
+   All containers are networked together using Docker Compose, enabling seamless internal communication while maintaining isolation. External access is provided through mapped ports.
 
-🚀 Feel free to get in touch with me for any further queries or support, happy to help :)
+## 🐳 Docker Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │    Backend      │    │    Database     │
+│   (React+Nginx) │    │   (Node.js)     │    │   (MongoDB)     │
+│   Port: 7500    │◄──►│   Port: 5000    │◄──►│   Port: 27017   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+
+## ⚙️ Configuration
+
+### Environment Variables
+Create a `.env` file in the root directory:
+
+```env
+# Database Configuration
+MONGODB_URI=mongodb://database:27017/wanderlust
+
+# Backend Configuration
+NODE_ENV=production
+PORT=5000
+
+# Frontend Configuration
+VITE_API_URL=/api
+```
+
+### Port Configuration
+
+| Service  | Container Port | Host Port | URL |
+|----------|---------------|-----------|-----|
+| Frontend | 80 | 7500 | http://localhost:7500 |
+| Backend | 5000 | 5000 | http://localhost:5000 |
+| MongoDB | 27017 | 27017 | mongodb://localhost:27017 |
+
+## 🔧 Development
+
+### Available Commands
+
+```bash
+# 🚀 Start all services
+docker-compose up
+
+# 🔨 Build and start (after code changes)
+docker-compose up --build
+
+# 🕰️ Run in background
+docker-compose up -d
+
+# 📊 View logs
+docker-compose logs -f
+
+# 🔄 Restart specific service
+docker-compose restart backend
+
+# 🛑 Stop all services
+docker-compose down
+
+# 🗑️ Clean up (removes volumes/data)
+docker-compose down -v
+```
+
+
